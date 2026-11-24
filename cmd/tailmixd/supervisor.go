@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/maisem/tailmix/controlapi"
@@ -91,6 +92,7 @@ type supervisor struct {
 	updateMu      sync.Mutex
 	updateWake    chan struct{}
 	updateRestart chan updateRestart
+	operator      atomic.Value // string; see operatorUID
 
 	leaseActivity effectiveip.ActivityTracker
 }
@@ -116,6 +118,7 @@ func newSupervisor(store *state.JSONStore, st state.State, initial []runtimeProf
 		updateRestart: make(chan updateRestart, 1),
 	}
 	s.leaseActivity.SetLeases(leasesFromState(st.Leases))
+	s.operator.Store(st.OperatorUID)
 	return s
 }
 

@@ -439,6 +439,15 @@ func completionCommandTree() *completionCommand {
 		},
 	}
 
+	operator := &completionCommand{
+		name: "operator", description: "Let one non-root user connect profiles and pick exit nodes", help: true,
+		subcommands: []*completionCommand{
+			leaf("show", "Show the operator", []completionFlag{jsonFlag()}),
+			leaf("set", "Set the operator", []completionFlag{jsonFlag()}, completionFreeValue),
+			leaf("clear", "Remove the operator", []completionFlag{jsonFlag()}),
+		},
+	}
+
 	return &completionCommand{
 		name:  "tailmix",
 		flags: []completionFlag{flag("Use a different daemon socket directory", completionDirectory, "--socket-dir")},
@@ -447,6 +456,7 @@ func completionCommandTree() *completionCommand {
 			{name: "up", description: "Start every enabled profile", help: true},
 			{name: "down", description: "Stop every profile without changing profile enablement", help: true},
 			update,
+			operator,
 			profiles,
 			routes,
 			exitNode,
